@@ -1,0 +1,13 @@
+# 6 certificate files, 12 findings
+high	CERT001	expiring.pem (soon.example.test)	expires in 10 days
+high	CERT005	no-san.pem (intranet.example.test)	no Subject Alternative Name: modern clients ignore the CN
+high	CERT003	sha1-signed.pem (old.example.test)	signed with SHA-1
+high	CERT002	weak-rsa.pem (legacy.example.test)	RSA key of 1024 bits is below the 2048-bit minimum
+medium	CERT004	no-san.pem (intranet.example.test)	valid for 800 days: above the 398-day limit for public certificates
+low	CERT007	expiring.pem (soon.example.test)	RSA-2048 is not quantum-safe: plan the migration
+low	CERT007	good.pem (shop.example.test)	RSA-2048 is not quantum-safe: plan the migration
+low	CERT007	no-san.pem (intranet.example.test)	RSA-2048 is not quantum-safe: plan the migration
+low	CERT007	sha1-signed.pem (old.example.test)	RSA-2048 is not quantum-safe: plan the migration
+low	CERT007	weak-rsa.pem (legacy.example.test)	RSA-1024 is not quantum-safe: plan the migration
+low	CERT007	wildcard-ec.pem (*.example.test)	elliptic-curve key is not quantum-safe: plan the migration
+low	CERT008	wildcard-ec.pem (*.example.test)	wildcard certificate: one stolen key exposes every subdomain

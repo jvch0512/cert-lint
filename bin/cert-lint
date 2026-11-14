@@ -1,0 +1,32 @@
+#!/usr/bin/env escript
+%%! -noshell
+main(Args) ->
+    Dir = filename:dirname(filename:dirname(escript:script_name())),
+    code:add_patha(filename:join(Dir, "ebin")),
+    Usage = "usage: cert-lint <pem file or directory> [--tsv] [--today YYYY-MM-DD] [--fail-on high|critical]\nExit: 0 ok, 1 findings at or above --fail-on, 2 bad input.\n",
+    case Args of
+        [] -> halt_usage(Usage);
+        ["-" ++ _ | _] -> halt_usage(Usage);
+        [Path | Rest] ->
+            case parse(Rest, #{tsv => false, today => date(), fail => none}) of
+                error -> halt_usage(Usage);
+                Opts ->
+                    case filelib:is_file(Path) orelse filelib:is_dir(Path) of
+                        false -> io:format(standard_error, "error: no such file or directory: ~s~n", [Path]), halt(2);
+                        true ->
+                            R = {_, Fs} = certlint:lint_path(Path, maps:get(today, Opts)),
+                            io:put_chars(case maps:get(tsv, Opts) of true -> certlint:render_tsv(R); false -> certlint:render_text(R) end),
+                            Floor = case maps:get(fail, Opts) of critical -> 0; high -> 1; none -> -1 end,
+                            halt(case Floor >= 0 andalso lists:any(fun({S, _, _, _}) -> certlint:severity_rank(S) =< Floor end, Fs) of true -> 1; false -> 0 end)
+                    end
+            end
+    end.
+
+parse([], O) -> O;
+parse(["--tsv" | T], O) -> parse(T, O#{tsv := true});
+parse(["--today", D | T], O) -> try parse(T, O#{today := certlint:parse_date(D)}) catch _:_ -> error end;
+parse(["--fail-on", "high" | T], O) -> parse(T, O#{fail := high});
+parse(["--fail-on", "critical" | T], O) -> parse(T, O#{fail := critical});
+parse(_, _) -> error.
+
+halt_usage(U) -> io:put_chars(standard_error, U), halt(2).
