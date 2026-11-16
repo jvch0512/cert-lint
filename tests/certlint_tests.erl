@@ -20,6 +20,10 @@ weak_rsa_test() ->
     Fs = run("weak-rsa.pem", today()),
     ?assert(has(Fs, "CERT002", high)).
 sha1_test() -> ?assert(has(run("sha1-signed.pem", today()), "CERT003", high)).
+sha1_self_signed_root_is_only_low_test() ->
+    R = run("legacy-root-sha1.pem", today()),
+    ?assert(has(R, "CERT003", low)),
+    ?assertNot(has(R, "CERT003", high)).
 no_san_test() ->
     Fs = run("no-san.pem", today()),
     ?assert(has(Fs, "CERT005", high)),
@@ -51,7 +55,7 @@ bundle_test() ->
     ?assert(lists:any(fun({_, _, W, _}) -> lists:prefix("bundle.pem#2", W) end, Fs)).
 directory_scan_test() ->
     {N, Fs} = certlint:lint_path("examples/certs", today()),
-    ?assertEqual(6, N), ?assert(length(Fs) >= 10),
+    ?assertEqual(7, N), ?assert(length(Fs) >= 10),
     [{S1, _, _, _} | _] = Fs, ?assertEqual(high, S1).
 sorted_test() ->
     {_, Fs} = certlint:lint_path("examples/certs", today()),
@@ -59,7 +63,7 @@ sorted_test() ->
     ?assertEqual(lists:sort(Ranks), Ranks).
 tsv_test() ->
     Out = lists:flatten(certlint:render_tsv(certlint:lint_path("examples/certs", today()))),
-    ?assert(lists:prefix("# 6 certificate files", Out)),
+    ?assert(lists:prefix("# 7 certificate files", Out)),
     ?assert(string:find(Out, "high\tCERT003\t") =/= nomatch).
 text_test() ->
     Out = lists:flatten(certlint:render_text(certlint:lint_path("examples/certs", today()))),

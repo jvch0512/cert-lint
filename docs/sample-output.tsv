@@ -1,4 +1,4 @@
-# 6 certificate files, 12 findings
+# 7 certificate files, 14 findings
 high	CERT001	expiring.pem (soon.example.test)	expires in 10 days
 high	CERT005	no-san.pem (intranet.example.test)	no Subject Alternative Name: modern clients ignore the CN
 high	CERT003	sha1-signed.pem (old.example.test)	signed with SHA-1
@@ -6,6 +6,8 @@ high	CERT002	weak-rsa.pem (legacy.example.test)	RSA key of 1024 bits is below th
 medium	CERT004	no-san.pem (intranet.example.test)	valid for 800 days: above the 398-day limit for public certificates
 low	CERT007	expiring.pem (soon.example.test)	RSA-2048 is not quantum-safe: plan the migration
 low	CERT007	good.pem (shop.example.test)	RSA-2048 is not quantum-safe: plan the migration
+low	CERT003	legacy-root-sha1.pem (Test Legacy Root CA)	self-signed root signed with SHA-1: not validated by clients, but check that nothing is issued with SHA-1 below it
+low	CERT007	legacy-root-sha1.pem (Test Legacy Root CA)	RSA-2048 is not quantum-safe: plan the migration
 low	CERT007	no-san.pem (intranet.example.test)	RSA-2048 is not quantum-safe: plan the migration
 low	CERT007	sha1-signed.pem (old.example.test)	RSA-2048 is not quantum-safe: plan the migration
 low	CERT007	weak-rsa.pem (legacy.example.test)	RSA-1024 is not quantum-safe: plan the migration

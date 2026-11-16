@@ -1,4 +1,4 @@
-6 files, 12 findings
+7 files, 14 findings
 HIGH      CERT001 expiring.pem (soon.example.test)
           expires in 10 days
 HIGH      CERT005 no-san.pem (intranet.example.test)
@@ -12,6 +12,10 @@ MEDIUM    CERT004 no-san.pem (intranet.example.test)
 LOW       CERT007 expiring.pem (soon.example.test)
           RSA-2048 is not quantum-safe: plan the migration
 LOW       CERT007 good.pem (shop.example.test)
+          RSA-2048 is not quantum-safe: plan the migration
+LOW       CERT003 legacy-root-sha1.pem (Test Legacy Root CA)
+          self-signed root signed with SHA-1: not validated by clients, but check that nothing is issued with SHA-1 below it
+LOW       CERT007 legacy-root-sha1.pem (Test Legacy Root CA)
           RSA-2048 is not quantum-safe: plan the migration
 LOW       CERT007 no-san.pem (intranet.example.test)
           RSA-2048 is not quantum-safe: plan the migration

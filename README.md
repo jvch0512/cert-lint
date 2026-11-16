@@ -2,6 +2,8 @@
 
 A certificate inventory is the first step of every TLS cleanup and every post-quantum migration. cert-lint reads PEM files and tells you which certificates are expired or about to be, which use weak keys or SHA-1 signatures, which have no Subject Alternative Name, and which still rely on RSA or elliptic curves that a quantum computer would break.
 
+![Terminal demo of cert-lint on its sample data](docs/demo.svg)
+
 **Live demo:** https://jvch0512.github.io/cert-lint/ (Synthetic certificates for example.test hosts, evaluated at 2026-11-14.)
 
 Erlang/OTP, standard library only (uses OTP's public_key). The demo page is rendered from the tool's `--tsv` output by `scripts/site.py` (Python 3, only needed to regenerate the page).
@@ -47,3 +49,13 @@ make test    # EUnit tests, 20+ cases
 ```
 
 MIT.
+
+## Code scanning (SARIF)
+
+`scripts/tsv2sarif.py` converts the `--tsv` output into SARIF 2.1.0, so findings show up in GitHub code scanning:
+
+```sh
+./bin/cert-lint examples/certs --today 2026-11-14 --tsv | python3 scripts/tsv2sarif.py --tool cert-lint --prefix examples/certs > results.sarif
+```
+
+Upload `results.sarif` with `github/codeql-action/upload-sarif`. Severities map to SARIF levels (critical and high to error, medium to warning, low and info to note) and to a `security-severity` score.

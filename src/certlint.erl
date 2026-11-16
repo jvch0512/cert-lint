@@ -87,7 +87,12 @@ lint_cert(Cert = #'OTPCertificate'{tbsCertificate = T}, Today, Where0) ->
                   {ec, _} -> [{low, "CERT007", Where, "elliptic-curve key is not quantum-safe: plan the migration"}];
                   _ -> []
               end,
+    %% A self-signed root is a trust anchor: clients never verify its own signature, so an old hash there is not exploitable.
+    RootNote = Selfsigned andalso IsCa,
     Sig = case sig_oid(Cert) of
+              ?SHA1_RSA when RootNote -> [{low, "CERT003", Where, "self-signed root signed with SHA-1: not validated by clients, but check that nothing is issued with SHA-1 below it"}];
+              ?SHA1_ECDSA when RootNote -> [{low, "CERT003", Where, "self-signed root signed with SHA-1: not validated by clients, but check that nothing is issued with SHA-1 below it"}];
+              ?MD5_RSA when RootNote -> [{low, "CERT003", Where, "self-signed root signed with MD5: not validated by clients, but check that nothing is issued with MD5 below it"}];
               ?SHA1_RSA -> [{high, "CERT003", Where, "signed with SHA-1"}];
               ?SHA1_ECDSA -> [{high, "CERT003", Where, "signed with SHA-1"}];
               ?MD5_RSA -> [{high, "CERT003", Where, "signed with MD5"}];
